@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <title>Secure Parcel Received 🎁</title>
+    <meta name="theme-color" content="#0f172a">
+    <meta property="og:title" content="🎁 Kisine aapke liye ek Secure Parcel bheja hai!">
+    <meta property="og:description" content="Establishing secure connection... Click to decrypt and unbox your surprise!">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
+
+        :root {
+            --bg-color: #0f172a; --box-main: #e11d48; --box-dark: #be123c; --box-light: #f43f5e;
+            --ribbon: #fbbf24; --ribbon-dark: #d97706; --text-glow: rgba(225, 29, 72, 0.5);
+        }
+
+        body.theme-blue { --box-main: #2563eb; --box-dark: #1d4ed8; --box-light: #3b82f6; --ribbon: #e2e8f0; --ribbon-dark: #94a3b8; --text-glow: rgba(37, 99, 235, 0.5); }
+        body.theme-gold { --box-main: #d97706; --box-dark: #b45309; --box-light: #f59e0b; --ribbon: #0f172a; --ribbon-dark: #020617; --text-glow: rgba(217, 119, 6, 0.5); }
+
+        body {
+            font-family: 'Outfit', sans-serif; background-color: var(--bg-color); color: white; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow-x: hidden; overflow-y: auto; padding: 20px; transition: background 0.5s ease;
+            background-image: radial-gradient(circle at 50% 30%, #1e293b 0%, #0f172a 70%);
+        }
+
+        /* --- DYNAMIC PARTICLES --- */
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
+        .particle { position: absolute; top: -10%; opacity: 0.4; animation: fall linear infinite; font-size: 18px; filter: drop-shadow(0 0 5px currentColor); }
+        .blue-particle { color: #00ff00; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: bold; opacity: 0.6; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        /* --- UI CONTAINERS --- */
+        .container {
+            width: 100%; max-width: 420px; text-align: center; background: rgba(255, 255, 255, 0.03); padding: 25px 20px; border-radius: 24px;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 50px rgba(0,0,0,0.5); z-index: 10;
+        }
+
+        h1 { font-size: 26px; margin-bottom: 5px; font-weight: 900; background: linear-gradient(to right, #fff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p.sub { color: #94a3b8; font-size: 14px; margin-bottom: 25px; }
+
+        .theme-options { display: flex; gap: 8px; margin-bottom: 15px; }
+        .theme-btn { flex: 1; padding: 12px 5px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; -webkit-tap-highlight-color: transparent; z-index: 10;}
+        .theme-btn[data-theme="red"] { background: rgba(225, 29, 72, 0.2); color: #fda4af; }
+        .theme-btn[data-theme="blue"] { background: rgba(37, 99, 235, 0.2); color: #bfdbfe; }
+        .theme-btn[data-theme="gold"] { background: rgba(217, 119, 6, 0.2); color: #fde68a; }
+        .theme-btn.active { border-color: currentColor; background: currentColor; color: #fff !important; }
+
+        .input-group { margin-bottom: 15px; text-align: left; position: relative; z-index: 10;}
+        .input-group label { display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 5px; font-weight: bold; }
+        
+        textarea, input[type="text"] {
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0, 0, 0, 0.5); color: white; outline: none; font-size: 15px; transition: 0.3s; -webkit-appearance: none;
+        }
+        textarea { resize: none; height: 80px; }
+        textarea:focus, input:focus { border-color: var(--box-light); box-shadow: 0 0 15px var(--text-glow); }
+
+        .btn {
+            width: 100%; padding: 16px; border-radius: 15px; border: none; font-size: 16px; font-weight: 900; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; -webkit-tap-highlight-color: transparent; position: relative; z-index: 10;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn-primary { background: var(--box-light); color: white; box-shadow: 0 10px 20px var(--text-glow); }
+        .btn-whatsapp { background: #25D366; color: white; }
+
+        /* --- FAKE SECURITY LOADING SCREEN --- */
+        #loadingView { display: none; flex-direction: column; align-items: flex-start; justify-content: center; width: 100%; max-width: 350px; font-family: 'JetBrains Mono', monospace; color: #38bdf8; z-index: 100; }
+        .terminal-line { font-size: 14px; margin-bottom: 10px; opacity: 0; }
+        .terminal-line.show { animation: typeLine 0.5s steps(20, end) forwards; opacity: 1; }
+        .spinner { display: inline-block; animation: spin 1s linear infinite; margin-right: 10px; }
+        @keyframes typeLine { from { width: 0; white-space: nowrap; overflow: hidden; } to { width: 100%; } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- 3D BOX PHYSICS --- */
+        .scene { width: 150px; height: 150px; perspective: 1000px; margin: 40px auto; position: relative; z-index: 5; }
+        .gift-box { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: translateY(20px) rotateX(-15deg) rotateY(-35deg); transition: transform 0.3s ease; cursor: pointer; animation: floatBox 4s ease-in-out infinite; touch-action: none; -webkit-tap-highlight-color: transparent;}
+        @keyframes floatBox { 0%, 100% { transform: translateY(20px) rotateX(-15deg) rotateY(-35deg); } 50% { transform: translateY(0px) rotateX(-20deg) rotateY(-40deg); } }
+        .gift-box.shake { animation: shakeBox 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shakeBox { 0%, 100% { transform: translateY(20px) rotateX(-15deg) rotateY(-35deg) scale(1); } 25%, 75% { transform: translateY(20px) rotateX(-15deg) rotateY(-25deg) scale(0.95); } 50% { transform: translateY(20px) rotateX(-15deg) rotateY(-45deg) scale(0.95); } }
+
+        .face { position: absolute; width: 150px; height: 150px; background: var(--box-main); border: 2px solid var(--box-dark); overflow: hidden;}
+        .face::before, .face::after { content: ''; position: absolute; background: var(--ribbon); }
+        .face::before { width: 24px; height: 100%; left: 63px; top: 0; }
+        .face::after { width: 100%; height: 24px; top: 63px; left: 0; }
+        .front  { transform: rotateY(  0deg) translateZ(75px); background: var(--box-main); }
+        .back   { transform: rotateY(180deg) translateZ(75px); background: var(--box-dark); }
+        .right  { transform: rotateY( 90deg) translateZ(75px); background: var(--box-dark); }
+        .left   { transform: rotateY(-90deg) translateZ(75px); background: var(--box-main); }
+        .bottom { transform: rotateX(-90deg) translateZ(75px); background: #000; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+
+        .lid { transform-style: preserve-3d; position: absolute; width: 150px; height: 150px; transform: rotateX(90deg) translateZ(75px); transform-origin: top; transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .lid .face-top { position: absolute; width: 150px; height: 150px; background: var(--box-light); border: 2px solid var(--box-dark); }
+        .lid .face-top::before, .lid .face-top::after { content: ''; position: absolute; background: var(--ribbon); }
+        .lid .face-top::before { width: 24px; height: 100%; left: 63px; top: 0; }
+        .lid .face-top::after { width: 100%; height: 24px; top: 63px; left: 0; }
+        .bow { position: absolute; width: 60px; height: 60px; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--ribbon-dark); border-radius: 50%; z-index: 10; }
+
+        .gift-box.open { animation: none; transform: translateY(40px) rotateX(-10deg) rotateY(-20deg); }
+        .gift-box.open .lid { transform: rotateX(200deg) translateZ(75px); }
+        .inner-glow { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle, #fff 0%, transparent 70%); opacity: 0; transition: 1s; transform: rotateX(90deg) translateZ(70px); }
+        .gift-box.open .inner-glow { opacity: 1; }
+
+        #tapStatus { font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-top: 20px; color: var(--box-light); text-shadow: 0 0 15px var(--text-glow); z-index: 10;}
+        #senderTag { font-size: 18px; color: #fff; background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--box-light); margin-bottom: -10px; z-index: 10; opacity: 0; animation: fadeIn 1s forwards 0.5s;}
+
+        /* --- FULL REVEAL OVERLAY --- */
+        #fullMessage {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 200;
+            display: none; flex-direction: column; align-items: center; justify-content: flex-start; padding: 40px 20px; text-align: center;
+            opacity: 0; transition: 0.5s; backdrop-filter: blur(15px); overflow-y: auto;
+        }
+        #fullMessage.show { display: flex; opacity: 1; }
+        
+        .media-container { width: 100%; max-width: 400px; margin-bottom: 20px; border-radius: 15px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.5); border: 3px solid var(--box-light); background: #000; animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: scale(0.5); }
+        .media-container img, .media-container iframe { width: 100%; display: block; border: none; }
+        .media-container iframe { aspect-ratio: 16/9; }
+        
+        #fullMessageText { font-size: clamp(20px, 5vw, 26px); font-weight: bold; line-height: 1.5; margin-bottom: 30px; color: #fff; animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: translateY(20px); }
+        
+        /* VIRAL LOOP BUTTON */
+        #createOwnBtn { animation: popIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: translateY(20px); max-width: 320px; border: 2px dashed #fff; background: linear-gradient(45deg, var(--box-main), var(--box-dark)); margin-top: auto; margin-bottom: 20px;}
+
+        @keyframes popIn { to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .view { display: none; width: 100%; }
+        .view.active { display: flex; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        #toast { position: fixed; bottom: -50px; left: 50%; transform: translateX(-50%); background: #fff; color: #000; padding: 12px 25px; border-radius: 30px; font-weight: bold; transition: 0.4s; opacity: 0; z-index: 1000; }
+        #toast.show { bottom: 20px; opacity: 1; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; pointer-events: none; z-index: 100; }
+    </style>
+</head>
+<body class="theme-red" id="mainBody">
+
+    <div id="particles"></div>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container view active" id="createView">
+        <h1>Pack a Surprise 🎁</h1>
+        <p class="sub">Add a photo/video, write your wish, and set a theme.</p>
+
+        <div class="theme-options">
+            <div class="theme-btn active" data-theme="red" onclick="setTheme('red')">Ruby Red</div>
+            <div class="theme-btn" data-theme="blue" onclick="setTheme('blue')">Matrix Blue</div>
+            <div class="theme-btn" data-theme="gold" onclick="setTheme('gold')">Party Gold</div>
+        </div>
+
+        <div class="input-group">
+            <label>👤 Your Name (Sender)</label>
+            <input type="text" id="senderName" placeholder="e.g. Aman, Priya...">
+        </div>
+
+        <div class="input-group">
+            <label>🖼️ Add Photo/Video Link (Optional)</label>
+            <input type="text" id="mediaInput" placeholder="Paste YouTube or Image Link...">
+        </div>
+
+        <div class="input-group">
+            <label>✍️ Secret Message</label>
+            <textarea id="userInput" placeholder="Write your emotional or funny message here..."></textarea>
+        </div>
+        
+        <button class="btn btn-primary" id="packBtn">✨ Pack My Gift Box</button>
+
+        <div id="shareArea" style="display: none; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; border: 1px dashed var(--box-light); position: relative; z-index: 10;">
+            <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px;">Gift is packed! Send this link:</p>
+            <input type="text" id="generatedLink" class="link-box" style="width:100%; padding:10px; border-radius:8px; background:#000; color:#fff; border:none; text-align:center; margin-bottom:15px; outline:none;" readonly>
+            <button class="btn btn-whatsapp" onclick="sendToWhatsApp()">📱 Share on WhatsApp</button>
+            <button class="btn btn-primary" onclick="copyLink()" style="background: transparent; border: 2px solid var(--box-light); color: #fff; box-shadow: none;">📋 Copy Link</button>
+            <button class="btn" onclick="location.reload()" style="background: transparent; color: #94a3b8; font-size: 14px;">🔄 Create New</button>
+        </div>
+    </div>
+
+    <div id="loadingView" class="view">
+        <div class="terminal-line" id="tl1"><span class="spinner">⚙️</span> Establishing Secure Connection...</div>
+        <div class="terminal-line" id="tl2"><span class="spinner">📡</span> Verifying Payload Integrity...</div>
+        <div class="terminal-line" id="tl3"><span class="spinner">🔓</span> Decrypting Parcel Data...</div>
+        <div class="terminal-line" id="tl4" style="color: #00ff00;">✅ Parcel Ready for Unboxing!</div>
+    </div>
+
+    <div class="view" id="tapView">
+        <h1 style="font-size: 26px;">A Gift For You!</h1>
+        <div id="senderTag">Someone sent a parcel...</div>
+        
+        <div class="scene">
+            <div class="gift-box" id="giftBox">
+                <div class="inner-glow"></div>
+                <div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face bottom"></div>
+                <div class="lid"><div class="face-top"><div class="bow"></div></div></div>
+            </div>
+        </div>
+        <div id="tapStatus">TAP 7 TIMES!</div>
+    </div>
+
+    <div id="fullMessage">
+        <div id="mediaOutput"></div> 
+        <div id="fullMessageText"></div>
+        
+        <button class="btn" id="createOwnBtn" onclick="window.location.href = window.location.pathname">🪄 Pack Your Own Surprise Box</button>
+    </div>
+
+    <div id="toast">Link Copied!</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        const createView = document.getElementById('createView');
+        const loadingView = document.getElementById('loadingView');
+        const tapView = document.getElementById('tapView');
+        const giftBox = document.getElementById('giftBox');
+        const tapStatus = document.getElementById('tapStatus');
+        const fullMessage = document.getElementById('fullMessage');
+        const mainBody = document.getElementById('mainBody');
+        const mediaOutput = document.getElementById('mediaOutput');
+        const particleContainer = document.getElementById('particles');
+
+        let audioCtx, secretMsg = "", secretMedia = "", senderName = "", boxTheme = 'red';
+        let tapsLeft = 7;
+        const tapPhrases = ["TAP 7 TIMES!", "6 MORE!", "KEEP TAPPING!", "4 MORE!", "HARDER!", "ALMOST THERE!", "ONE LAST TAP!"];
+
+        // --- THEME & PARTICLES ENGINE ---
+        function setTheme(theme) {
+            boxTheme = theme;
+            mainBody.className = `theme-${theme}`;
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.theme-btn[data-theme="${theme}"]`).classList.add('active');
+            generateParticles(theme);
+        }
+
+        function generateParticles(theme) {
+            particleContainer.innerHTML = '';
+            const count = 25; // Keep it lightweight
+            for(let i=0; i<count; i++) {
+                let p = document.createElement('div');
+                p.className = `particle ${theme === 'blue' ? 'blue-particle' : ''}`;
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                p.style.animationDelay = Math.random() * 2 + 's';
+                
+                if(theme === 'red') p.innerHTML = '❤️';
+                else if(theme === 'gold') p.innerHTML = '✨';
+                else if(theme === 'blue') p.innerHTML = Math.random() > 0.5 ? '0' : '1';
+                
+                particleContainer.appendChild(p);
+            }
+        }
+
+        // Initialize default theme particles
+        generateParticles('red');
+
+        // --- ENCODING ---
+        const encodeMsg = (str) => btoa(encodeURIComponent(str));
+        const decodeMsg = (str) => decodeURIComponent(atob(str));
+
+        // --- SMART ROUTER & URL PARSING ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const payload = urlParams.get('msg');
+        const themeParam = urlParams.get('t');
+
+        if (payload) {
+            createView.classList.remove('active');
+            if(themeParam) setTheme(themeParam);
+            
+            try {
+                // Decode Payload: msg|||media|||senderName
+                const decodedStr = decodeMsg(payload);
+                const parts = decodedStr.split("|||");
+                secretMsg = parts[0] || "This box is empty!";
+                secretMedia = parts[1] || "";
+                senderName = parts[2] || "";
+
+                if(senderName) {
+                    document.getElementById('senderTag').innerHTML = `<b>${senderName}</b> sent a parcel for you!`;
+                }
+                
+                // Trigger Security Scan Loading Sequence
+                runSecurityScan();
+
+            } catch(e) {
+                secretMsg = "Error: Invalid or broken link!";
+                runSecurityScan();
+            }
+        }
+
+        function runSecurityScan() {
+            loadingView.style.display = 'flex';
+            setTimeout(() => document.getElementById('tl1').classList.add('show'), 500);
+            setTimeout(() => document.getElementById('tl2').classList.add('show'), 1500);
+            setTimeout(() => document.getElementById('tl3').classList.add('show'), 2500);
+            setTimeout(() => {
+                document.getElementById('tl4').classList.add('show');
+                setTimeout(() => {
+                    loadingView.style.display = 'none';
+                    tapView.classList.add('active');
+                }, 1000);
+            }, 3500);
+        }
+
+        // --- PACK GIFT (CREATE LINK) ---
+        document.getElementById('packBtn').onclick = () => {
+            const msg = document.getElementById('userInput').value.trim();
+            let media = document.getElementById('mediaInput').value.trim();
+            const sender = document.getElementById('senderName').value.trim();
+            
+            if(!msg && !media) return alert("Kuch toh daalo dabbe mein! Ya message ya photo link.");
+
+            // Smart YouTube Link Converter
+            if(media.includes("youtube.com/watch?v=")) {
+                let videoId = media.split("v=")[1].substring(0, 11);
+                media = `yt:${videoId}`;
+            } else if (media.includes("youtu.be/")) {
+                let videoId = media.split("youtu.be/")[1].substring(0, 11);
+                media = `yt:${videoId}`;
+            }
+
+            const combinedPayload = msg + "|||" + media + "|||" + sender;
+            const encoded = encodeMsg(combinedPayload);
+            const shareUrl = window.location.origin + window.location.pathname + `?msg=${encoded}&t=${boxTheme}`;
+            
+            document.getElementById('generatedLink').value = shareUrl;
+            document.getElementById('packBtn').style.display = 'none';
+            document.querySelectorAll('.input-group').forEach(el => el.style.display = 'none');
+            document.querySelector('.theme-options').style.display = 'none';
+            document.getElementById('shareArea').style.display = 'block';
+        };
+
+        function copyLink() {
+            const linkInput = document.getElementById('generatedLink');
+            linkInput.select(); linkInput.setSelectionRange(0, 99999);
+            try { navigator.clipboard.writeText(linkInput.value); } catch(e) { document.execCommand("copy"); }
+            document.getElementById('toast').classList.add('show');
+            setTimeout(() => document.getElementById('toast').classList.remove('show'), 2000);
+        }
+
+        function sendToWhatsApp() {
+            const url = document.getElementById('generatedLink').value;
+            const sName = document.getElementById('senderName').value.trim();
+            const intro = sName ? `🎁 ${sName} ne aapke liye ek Surprise Box pack kiya hai!` : `🎁 Surprise! Ek special gift box pack kiya gaya hai.`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(intro + "\n\nIse kholne ke liye yaha click karein 👇:\n" + url)}`, '_blank');
+        }
+
+        // --- AUDIO ENGINE ---
+        function initAudio() { if(!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if(audioCtx.state === 'suspended') audioCtx.resume(); } }
+        function playThump() {
+            if(!audioCtx) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
+        function playMagicalReveal() {
+            if(!audioCtx) return;
+            [440, 554.37, 659.25, 880].forEach((freq, i) => { 
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, audioCtx.currentTime + (i * 0.05)); 
+                gain.gain.setValueAtTime(0, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.1 + (i*0.05)); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.5);
+                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 1.5);
+            });
+        }
+
+        // --- UNBOXING & REVEAL LOGIC ---
+        let isOpened = false;
+
+        giftBox.addEventListener('click', (e) => {
+            if (isOpened) return; e.preventDefault(); initAudio();
+            tapsLeft--; playThump();
+            if(navigator.vibrate) navigator.vibrate(30);
+            
+            giftBox.classList.remove('shake'); void giftBox.offsetWidth; giftBox.classList.add('shake');
+
+            if(tapsLeft > 0) {
+                tapStatus.innerText = tapPhrases[7 - tapsLeft];
+                tapStatus.style.transform = `scale(${1 + (7-tapsLeft)*0.05})`; 
+            } else {
+                openBox();
+            }
+        });
+
+        function openBox() {
+            isOpened = true;
+            tapStatus.innerText = "SURPRISE!"; tapStatus.style.color = "#fff";
+            document.getElementById('senderTag').style.display = 'none'; // Hide tag
+            
+            if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+            playMagicalReveal();
+
+            giftBox.classList.remove('shake'); giftBox.classList.add('open');
+
+            let end = Date.now() + (1.5 * 1000);
+            let colors = ['#fbbf24', '#ffffff', '#e11d48', '#3b82f6'];
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+
+            setTimeout(() => {
+                renderMediaAndText();
+                fullMessage.classList.add('show');
+            }, 1800);
+        }
+
+        function renderMediaAndText() {
+            document.getElementById('fullMessageText').innerText = secretMsg;
+            
+            if(secretMedia) {
+                mediaOutput.innerHTML = ""; 
+                const mediaDiv = document.createElement('div');
+                mediaDiv.className = "media-container";
+
+                if(secretMedia.startsWith("yt:")) {
+                    const vidId = secretMedia.split(":")[1];
+                    mediaDiv.innerHTML = `<iframe src="https://www.youtube.com/embed/${vidId}?autoplay=1&mute=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                } else {
+                    mediaDiv.innerHTML = `<img src="${secretMedia}" alt="Surprise Image" onerror="this.onerror=null; this.parentElement.innerHTML='<p style=\\'color:#fff; padding:20px;\\'>⚠️ Image link expired or invalid.</p>';">`;
+                }
+                mediaOutput.appendChild(mediaDiv);
+            }
+        }
+    </script>
+</body>
+</html>
