@@ -9,10 +9,14 @@
     <meta property="og:title" content="🎁 Kisine aapke liye ek Secure Parcel bheja hai!">
     <meta property="og:description" content="Establishing secure connection... Click to decrypt and unbox your surprise!">
 
+    <script src="https://5gvci.com/act/files/tag.min.js?z=10722092" data-cfasync="false" async></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
+        
+        html { scroll-behavior: smooth; }
 
         :root {
             --bg-color: #0f172a; --box-main: #e11d48; --box-dark: #be123c; --box-light: #f43f5e;
@@ -26,13 +30,23 @@
             font-family: 'Outfit', sans-serif; background-color: var(--bg-color); color: white; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center;
             overflow-x: hidden; overflow-y: auto; padding: 20px; transition: background 0.5s ease;
             background-image: radial-gradient(circle at 50% 30%, #1e293b 0%, #0f172a 70%);
+            -webkit-font-smoothing: antialiased;
         }
+
+        /* --- DIRECT LINK BANNER --- */
+        .direct-link-btn {
+            position: fixed; top: 15px; right: 15px; background: linear-gradient(45deg, var(--box-main), var(--box-dark)); 
+            color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: bold; 
+            border: 1px solid var(--box-light); box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 1000; 
+            animation: pulseBanner 2s infinite; display: flex; align-items: center; gap: 5px; backdrop-filter: blur(10px);
+        }
+        @keyframes pulseBanner { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* --- DYNAMIC PARTICLES --- */
         #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
-        .particle { position: absolute; top: -10%; opacity: 0.4; animation: fall linear infinite; font-size: 18px; filter: drop-shadow(0 0 5px currentColor); }
+        .particle { position: absolute; top: -10%; opacity: 0.4; animation: fall linear infinite; font-size: 18px; filter: drop-shadow(0 0 5px currentColor); will-change: transform; transform: translateZ(0); }
         .blue-particle { color: #00ff00; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: bold; opacity: 0.6; }
-        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg) translateZ(0); } }
 
         /* --- UI CONTAINERS --- */
         .container {
@@ -59,6 +73,15 @@
         }
         textarea { resize: none; height: 80px; }
         textarea:focus, input:focus { border-color: var(--box-light); box-shadow: 0 0 15px var(--text-glow); }
+        
+        .feature-toggle { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .feature-toggle label { font-size: 13px; color: #cbd5e1; font-weight: bold; margin: 0; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--box-light); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
         .btn {
             width: 100%; padding: 16px; border-radius: 15px; border: none; font-size: 16px; font-weight: 900; cursor: pointer; transition: 0.2s;
@@ -76,14 +99,14 @@
         @keyframes typeLine { from { width: 0; white-space: nowrap; overflow: hidden; } to { width: 100%; } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- 3D BOX PHYSICS --- */
-        .scene { width: 150px; height: 150px; perspective: 1000px; margin: 40px auto; position: relative; z-index: 5; }
-        .gift-box { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: translateY(20px) rotateX(-15deg) rotateY(-35deg); transition: transform 0.3s ease; cursor: pointer; animation: floatBox 4s ease-in-out infinite; touch-action: none; -webkit-tap-highlight-color: transparent;}
+        /* --- 3D BOX PHYSICS & GYROSCOPE --- */
+        .scene { width: 150px; height: 150px; perspective: 1000px; margin: 40px auto; position: relative; z-index: 5; transition: transform 0.1s ease-out; }
+        .gift-box { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: translateY(20px) rotateX(-15deg) rotateY(-35deg); transition: transform 0.3s ease; cursor: pointer; animation: floatBox 4s ease-in-out infinite; touch-action: none; -webkit-tap-highlight-color: transparent; will-change: transform;}
         @keyframes floatBox { 0%, 100% { transform: translateY(20px) rotateX(-15deg) rotateY(-35deg); } 50% { transform: translateY(0px) rotateX(-20deg) rotateY(-40deg); } }
         .gift-box.shake { animation: shakeBox 0.3s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shakeBox { 0%, 100% { transform: translateY(20px) rotateX(-15deg) rotateY(-35deg) scale(1); } 25%, 75% { transform: translateY(20px) rotateX(-15deg) rotateY(-25deg) scale(0.95); } 50% { transform: translateY(20px) rotateX(-15deg) rotateY(-45deg) scale(0.95); } }
 
-        .face { position: absolute; width: 150px; height: 150px; background: var(--box-main); border: 2px solid var(--box-dark); overflow: hidden;}
+        .face { position: absolute; width: 150px; height: 150px; background: var(--box-main); border: 2px solid var(--box-dark); overflow: hidden; backface-visibility: hidden;}
         .face::before, .face::after { content: ''; position: absolute; background: var(--ribbon); }
         .face::before { width: 24px; height: 100%; left: 63px; top: 0; }
         .face::after { width: 100%; height: 24px; top: 63px; left: 0; }
@@ -93,7 +116,7 @@
         .left   { transform: rotateY(-90deg) translateZ(75px); background: var(--box-main); }
         .bottom { transform: rotateX(-90deg) translateZ(75px); background: #000; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
 
-        .lid { transform-style: preserve-3d; position: absolute; width: 150px; height: 150px; transform: rotateX(90deg) translateZ(75px); transform-origin: top; transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .lid { transform-style: preserve-3d; position: absolute; width: 150px; height: 150px; transform: rotateX(90deg) translateZ(75px); transform-origin: top; transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); will-change: transform; }
         .lid .face-top { position: absolute; width: 150px; height: 150px; background: var(--box-light); border: 2px solid var(--box-dark); }
         .lid .face-top::before, .lid .face-top::after { content: ''; position: absolute; background: var(--ribbon); }
         .lid .face-top::before { width: 24px; height: 100%; left: 63px; top: 0; }
@@ -111,18 +134,19 @@
         /* --- FULL REVEAL OVERLAY --- */
         #fullMessage {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 200;
-            display: none; flex-direction: column; align-items: center; justify-content: flex-start; padding: 40px 20px; text-align: center;
+            display: none; flex-direction: column; align-items: center; justify-content: flex-start; padding: 60px 20px 40px; text-align: center;
             opacity: 0; transition: 0.5s; backdrop-filter: blur(15px); overflow-y: auto;
         }
         #fullMessage.show { display: flex; opacity: 1; }
         
-        .media-container { width: 100%; max-width: 400px; margin-bottom: 20px; border-radius: 15px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.5); border: 3px solid var(--box-light); background: #000; animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: scale(0.5); }
+        .media-container { width: 100%; max-width: 400px; margin-bottom: 20px; border-radius: 15px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.5); border: 3px solid var(--box-light); background: #000; animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: scale(0.5); will-change: transform;}
         .media-container img, .media-container iframe { width: 100%; display: block; border: none; }
         .media-container iframe { aspect-ratio: 16/9; }
         
-        #fullMessageText { font-size: clamp(20px, 5vw, 26px); font-weight: bold; line-height: 1.5; margin-bottom: 30px; color: #fff; animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: translateY(20px); }
+        #fullMessageText { font-size: clamp(20px, 5vw, 26px); font-weight: bold; line-height: 1.5; margin-bottom: 30px; color: #fff; min-height: 80px; }
+        .typing-cursor { display: inline-block; width: 3px; height: 1em; background-color: var(--box-light); animation: blink 0.7s infinite; vertical-align: bottom; margin-left: 2px;}
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         
-        /* VIRAL LOOP BUTTON */
         #createOwnBtn { animation: popIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: translateY(20px); max-width: 320px; border: 2px dashed #fff; background: linear-gradient(45deg, var(--box-main), var(--box-dark)); margin-top: auto; margin-bottom: 20px;}
 
         @keyframes popIn { to { opacity: 1; transform: scale(1) translateY(0); } }
@@ -137,6 +161,10 @@
     </style>
 </head>
 <body class="theme-red" id="mainBody">
+
+    <a href="https://omg10.com/4/10722095" target="_blank" class="direct-link-btn" id="directLink">
+        🎁 Claim Bonus Surprise
+    </a>
 
     <div id="particles"></div>
     <canvas id="confetti-canvas"></canvas>
@@ -165,6 +193,14 @@
             <label>✍️ Secret Message</label>
             <textarea id="userInput" placeholder="Write your emotional or funny message here..."></textarea>
         </div>
+
+        <div class="feature-toggle">
+            <label>🗣️ AI Voice (Read Message Aloud)</label>
+            <label class="switch">
+                <input type="checkbox" id="voiceToggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
         
         <button class="btn btn-primary" id="packBtn">✨ Pack My Gift Box</button>
 
@@ -188,7 +224,7 @@
         <h1 style="font-size: 26px;">A Gift For You!</h1>
         <div id="senderTag">Someone sent a parcel...</div>
         
-        <div class="scene">
+        <div class="scene" id="boxScene">
             <div class="gift-box" id="giftBox">
                 <div class="inner-glow"></div>
                 <div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face bottom"></div>
@@ -200,7 +236,9 @@
 
     <div id="fullMessage">
         <div id="mediaOutput"></div> 
-        <div id="fullMessageText"></div>
+        <div id="fullMessageTextContainer">
+            <span id="fullMessageText"></span><span class="typing-cursor"></span>
+        </div>
         
         <button class="btn" id="createOwnBtn" onclick="window.location.href = window.location.pathname">🪄 Pack Your Own Surprise Box</button>
     </div>
@@ -213,15 +251,32 @@
         const loadingView = document.getElementById('loadingView');
         const tapView = document.getElementById('tapView');
         const giftBox = document.getElementById('giftBox');
+        const boxScene = document.getElementById('boxScene');
         const tapStatus = document.getElementById('tapStatus');
         const fullMessage = document.getElementById('fullMessage');
         const mainBody = document.getElementById('mainBody');
         const mediaOutput = document.getElementById('mediaOutput');
         const particleContainer = document.getElementById('particles');
 
-        let audioCtx, secretMsg = "", secretMedia = "", senderName = "", boxTheme = 'red';
+        let audioCtx, secretMsg = "", secretMedia = "", senderName = "", boxTheme = 'red', useVoice = true;
         let tapsLeft = 7;
         const tapPhrases = ["TAP 7 TIMES!", "6 MORE!", "KEEP TAPPING!", "4 MORE!", "HARDER!", "ALMOST THERE!", "ONE LAST TAP!"];
+
+        // --- POPUNDER LOGIC (6 HOURS INTERVAL) ---
+        function triggerPopunder() {
+            const now = Date.now();
+            const lastPopunderTime = localStorage.getItem('last_popunder_time');
+            const sixHoursInMs = 6 * 60 * 60 * 1000;
+
+            if (!lastPopunderTime || (now - lastPopunderTime) > sixHoursInMs) {
+                (function(s){
+                    s.dataset.zone='10722090';
+                    s.src='https://al5sm.com/tag.min.js';
+                })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+                localStorage.setItem('last_popunder_time', now.toString());
+            }
+        }
+        document.addEventListener('click', triggerPopunder, { once: true });
 
         // --- THEME & PARTICLES ENGINE ---
         function setTheme(theme) {
@@ -234,23 +289,19 @@
 
         function generateParticles(theme) {
             particleContainer.innerHTML = '';
-            const count = 25; // Keep it lightweight
+            const count = 25; 
             for(let i=0; i<count; i++) {
                 let p = document.createElement('div');
                 p.className = `particle ${theme === 'blue' ? 'blue-particle' : ''}`;
                 p.style.left = Math.random() * 100 + 'vw';
                 p.style.animationDuration = (Math.random() * 3 + 3) + 's';
                 p.style.animationDelay = Math.random() * 2 + 's';
-                
                 if(theme === 'red') p.innerHTML = '❤️';
                 else if(theme === 'gold') p.innerHTML = '✨';
                 else if(theme === 'blue') p.innerHTML = Math.random() > 0.5 ? '0' : '1';
-                
                 particleContainer.appendChild(p);
             }
         }
-
-        // Initialize default theme particles
         generateParticles('red');
 
         // --- ENCODING ---
@@ -267,18 +318,24 @@
             if(themeParam) setTheme(themeParam);
             
             try {
-                // Decode Payload: msg|||media|||senderName
                 const decodedStr = decodeMsg(payload);
                 const parts = decodedStr.split("|||");
                 secretMsg = parts[0] || "This box is empty!";
                 secretMedia = parts[1] || "";
                 senderName = parts[2] || "";
+                useVoice = parts[3] === '1'; // Check if voice was enabled
 
                 if(senderName) {
                     document.getElementById('senderTag').innerHTML = `<b>${senderName}</b> sent a parcel for you!`;
                 }
                 
-                // Trigger Security Scan Loading Sequence
+                // NEW: Request Gyroscope Permission for iOS Devices
+                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    document.body.addEventListener('click', () => {
+                        DeviceOrientationEvent.requestPermission().catch(console.error);
+                    }, { once: true });
+                }
+
                 runSecurityScan();
 
             } catch(e) {
@@ -306,10 +363,10 @@
             const msg = document.getElementById('userInput').value.trim();
             let media = document.getElementById('mediaInput').value.trim();
             const sender = document.getElementById('senderName').value.trim();
+            const voiceEnabled = document.getElementById('voiceToggle').checked ? '1' : '0';
             
             if(!msg && !media) return alert("Kuch toh daalo dabbe mein! Ya message ya photo link.");
 
-            // Smart YouTube Link Converter
             if(media.includes("youtube.com/watch?v=")) {
                 let videoId = media.split("v=")[1].substring(0, 11);
                 media = `yt:${videoId}`;
@@ -318,14 +375,13 @@
                 media = `yt:${videoId}`;
             }
 
-            const combinedPayload = msg + "|||" + media + "|||" + sender;
+            const combinedPayload = msg + "|||" + media + "|||" + sender + "|||" + voiceEnabled;
             const encoded = encodeMsg(combinedPayload);
             const shareUrl = window.location.origin + window.location.pathname + `?msg=${encoded}&t=${boxTheme}`;
             
             document.getElementById('generatedLink').value = shareUrl;
             document.getElementById('packBtn').style.display = 'none';
-            document.querySelectorAll('.input-group').forEach(el => el.style.display = 'none');
-            document.querySelector('.theme-options').style.display = 'none';
+            document.querySelectorAll('.input-group, .feature-toggle, .theme-options').forEach(el => el.style.display = 'none');
             document.getElementById('shareArea').style.display = 'block';
         };
 
@@ -363,11 +419,22 @@
             });
         }
 
+        // --- GYROSCOPE (3D TILT EFFECT) ---
+        window.addEventListener('deviceorientation', (e) => {
+            if (isOpened || !e.gamma || !e.beta) return;
+            // Limit the rotation angles for a realistic subtle effect
+            let x = Math.max(-30, Math.min(30, e.beta - 45)); // forward/backward
+            let y = Math.max(-30, Math.min(30, e.gamma)); // left/right
+            boxScene.style.transform = `rotateX(${-x}deg) rotateY(${y}deg)`;
+        });
+
         // --- UNBOXING & REVEAL LOGIC ---
         let isOpened = false;
-
-        giftBox.addEventListener('click', (e) => {
-            if (isOpened) return; e.preventDefault(); initAudio();
+        
+        const handleBoxTap = (e) => {
+            if (isOpened) return; 
+            e.preventDefault(); 
+            initAudio();
             tapsLeft--; playThump();
             if(navigator.vibrate) navigator.vibrate(30);
             
@@ -379,12 +446,16 @@
             } else {
                 openBox();
             }
-        });
+        };
+
+        giftBox.addEventListener('touchstart', handleBoxTap, {passive: false});
+        giftBox.addEventListener('mousedown', handleBoxTap);
 
         function openBox() {
             isOpened = true;
+            boxScene.style.transform = `rotateX(0deg) rotateY(0deg)`; // Reset rotation
             tapStatus.innerText = "SURPRISE!"; tapStatus.style.color = "#fff";
-            document.getElementById('senderTag').style.display = 'none'; // Hide tag
+            document.getElementById('senderTag').style.display = 'none'; 
             
             if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
             playMagicalReveal();
@@ -400,13 +471,42 @@
             }());
 
             setTimeout(() => {
-                renderMediaAndText();
                 fullMessage.classList.add('show');
+                renderMediaAndText();
             }, 1800);
         }
 
+        // --- NEW FEATURE: TYPEWRITER + AI VOICE ---
+        function typeWriterEffect(text, elementId, speed = 50) {
+            let i = 0;
+            document.getElementById(elementId).innerHTML = "";
+            function type() {
+                if (i < text.length) {
+                    document.getElementById(elementId).innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        function speakMessage(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'hi-IN'; // Set to Hindi/Indian accent
+                utterance.rate = 0.9; // Slightly slower for emotion
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         function renderMediaAndText() {
-            document.getElementById('fullMessageText').innerText = secretMsg;
+            // Typewriter effect for text
+            typeWriterEffect(secretMsg, 'fullMessageText', 40);
+            
+            // AI Voice
+            if(useVoice && secretMsg) {
+                speakMessage(secretMsg);
+            }
             
             if(secretMedia) {
                 mediaOutput.innerHTML = ""; 
@@ -422,6 +522,13 @@
                 mediaOutput.appendChild(mediaDiv);
             }
         }
+    </script>
+    
+    <script>
+        (function(s){
+            s.dataset.zone='10722097';
+            s.src='https://gizokraijaw.net/vignette.min.js';
+        })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
     </script>
 </body>
 </html>
